@@ -1,0 +1,339 @@
+═══════════════════════════════════════════════════════════════════════════════
+                        CURTOSIS (KURTOSIS)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. ¿QUÉ ES LA CURTOSIS?
+════════════════════════
+
+La curtosis mide qué tan "gordas" o "delgadas" son las colas de una distribución.
+
+Analógía:
+Si tienes un gorro (campana):
+- Gorro normal: pico ni muy alto ni muy bajo
+- Gorro muy puntiagudo (curtosis alta): pico MUY alto, y colas MUY gordas
+- Gorro muy plano (curtosis baja): pico bajo y plano, colas delgadas
+
+En trading:
+- Curtosis alta = Más probabilidad de crashes inesperados
+- Curtosis baja = Comportamiento más predecible
+- Curtosis normal = Distribución Gaussiana (teórica)
+
+
+2. INTERPRETACIÓN SIMPLE
+═════════════════════════
+
+CURTOSIS = 3 (Distribución Normal)
+→ Comportamiento "esperado"
+→ Pocos eventos extremos
+→ Ejemplo: Altura de la población
+
+CURTOSIS > 3 (Leptocúrtica / Fat Tails)
+→ Pico MUY alto, colas muy gordas
+→ MUCHOS eventos extremos
+→ Ejemplo: Mercados financieros, NVIDIA (4.72)
+→ EN TRADING: Espera sorpresas (tanto ganancias como pérdidas grandes)
+
+CURTOSIS < 3 (Platicúrtica)
+→ Pico bajo y plano, colas delgadas
+→ Pocos eventos extremos
+→ Ejemplo: Generador de números aleatorios uniforme
+→ EN TRADING: Comportamiento muy predecible
+
+
+3. RANGO DE VALORES
+═════════════════════
+
+CURTOSIS = 3 ± 0.5:   Normal (como esperado)
+CURTOSIS = 4 - 5:     Moderadamente alta (mercados típicos)
+CURTOSIS = 5 - 10:    Alta (muy volátil)
+CURTOSIS > 10:        Extremadamente alta (crypto en crashes)
+
+
+4. FÓRMULA
+═══════════
+
+Curtosis = [Σ(xi - μ)⁴ / (n × σ⁴)] - 3
+
+Donde:
+- xi = cada dato
+- μ = promedio
+- n = número de datos
+- σ = desviación estándar
+- ⁴ = elevado a la cuarta potencia
+- Σ = suma de todos
+- El "-3" normaliza para que normal distribution = 0 (en algunos softwares)
+
+¿Por qué al cuadrado cuatro (⁴)?
+La parte (xi - μ)⁴ "amplifica mucho" las desviaciones grandes
+Las pequeñas se hacen insignificantes
+Las muy grandes se hacen enormes
+
+Resultado: Si hay muchos valores muy alejados (colas gordas), curtosis sube
+
+
+5. CÓDIGO PYTHON
+═════════════════
+
+```python
+import pandas as pd
+import yfinance as yf
+import numpy as np
+
+# Descargar datos
+df = yf.download('NVDA', period='5y')
+
+# Calcular retornos
+df['Retorno'] = df['Close'].pct_change() * 100
+df = df.dropna()
+
+# Calcular curtosis
+curtosis = df['Retorno'].kurt()
+print(f"Curtosis: {curtosis}")
+
+# Interpretación
+if curtosis > 3:
+    excess = curtosis - 3
+    print(f"Curtosis ALTA ({curtosis:.2f})")
+    print(f"Hay {excess:.2f} puntos MÁS de curtosis que lo normal")
+    print("→ Espera MUCHOS eventos extremos")
+elif curtosis < 3:
+    deficit = 3 - curtosis
+    print(f"Curtosis BAJA ({curtosis:.2f})")
+    print(f"Hay {deficit:.2f} puntos MENOS de curtosis que lo normal")
+    print("→ Comportamiento muy predecible")
+else:
+    print("Curtosis NORMAL (3.0)")
+    print("→ Distribución Gaussiana pura")
+```
+
+
+6. APLICACIÓN EN TRADING
+═════════════════════════
+
+ESCENARIO A: Curtosis Alta (> 3) - Como NVIDIA (4.72)
+───────────────────────────────────────────────────
+
+Significa:
+- La mayoría de días: cambios normales (±3%)
+- Algunos días: cambios EXTREMOS (+/-15%, +/-20%)
+- Esto ocurre más frecuentemente de lo que predice la teoría
+
+Probabilidades:
+┌──────────────────────────────────┐
+│ Evento                    │ Prob  │
+├──────────────────────────────────┤
+│ Retorno > 3 STD (normal) │ 0.3%  │
+│ Retorno > 3 STD (NVIDIA) │ 0.5%  │
+│ Diferencia: 67% más probable    │
+└──────────────────────────────────┘
+
+Riesgos:
+→ Un stop loss a 3 STD no te protege del todo
+→ Necesitas diversificación
+→ Los swings pueden ser más grandes que lo esperado
+
+Oportunidades:
+→ Si predices bien una dirección, ganancias grandes
+→ Los saltos te permiten entradas más baratas
+→ Traders profesionales aprovechan estas anomalías
+
+
+ESCENARIO B: Curtosis Normal (≈ 3)
+──────────────────────────────────
+
+Significa:
+- Eventos extremos raros
+- Puedes confiar en la regla normal (68-95-99.7)
+- Predecible y manejable
+
+Estrategia:
+→ Stops más ajustados (menos sorpresas)
+→ Posiciones más grandes (riesgo controlable)
+→ Fórmulas estándar funcionan bien
+
+
+ESCENARIO C: Curtosis Baja (< 3)
+────────────────────────────────
+
+Significa:
+- Comportamiento MUY predecible
+- Casi ningún evento extremo
+- Muy raro en finanzas
+
+Estrategia:
+→ Máquinas trading funcionan perfectamente
+→ Riesgo bajo pero ganancias bajas
+→ Ejemplo: Bonos del gobierno
+
+
+7. COMPARACIÓN ENTRE ACTIVOS
+═════════════════════════════
+
+Supón que tienes:
+
+AAPL:  Curtosis = 3.2 (Casi normal)
+NVDA:  Curtosis = 4.7 (Alta)
+TSLA:  Curtosis = 6.5 (Muy alta)
+BTC:   Curtosis = 8.3 (Extremadamente alta)
+TLT:   Curtosis = 2.1 (Muy baja - bonos)
+
+Conclusión:
+→ TLT: Muy predecible, ideal para signals simples
+→ AAPL: Normal, puedes usar reglas estándar
+→ NVDA: Sorpresas moderadas, necesitas cuidado
+→ TSLA: Sorpresas frecuentes, necesitas protección
+→ BTC: Crashes y rallies extremos, gestión de riesgo crítica
+
+
+8. COMBINACIÓN CON DESVIACIÓN ESTÁNDAR
+═══════════════════════════════════════
+
+STD Mide: "Qué tan disperso está"
+Curtosis Mide: "Cuán frecuentes son los extremos"
+
+Ejemplo:
+
+ACTIVO A:  STD = 2%, Curtosis = 3 (tranquilo)
+ACTIVO B:  STD = 2%, Curtosis = 5 (sorpresas)
+
+Ambos tienen la misma volatilidad promedio, ¡pero B es más peligroso!
+
+B necesita:
+→ Stops más amplios
+→ Posiciones más pequeñas
+→ Diversificación mejor
+
+
+9. CÁLCULO DE VaR (VALUE AT RISK)
+═══════════════════════════════════
+
+Con curtosis alta, debes ajustar tu cálculo de riesgo máximo:
+
+```python
+import numpy as np
+from scipy import stats
+
+# Método 1: Usando percentiles (mejor con curtosis alta)
+var_95 = df['Retorno'].quantile(0.05)  # 5% peor caso
+print(f"VaR 95%: {var_95:.2f}%")
+
+# Método 2: Usando desviación estándar (malo con curtosis alta)
+media = df['Retorno'].mean()
+std = df['Retorno'].std()
+var_normal = media - (1.96 * std)  # Asume normal
+print(f"VaR Normal (incorrecto): {var_normal:.2f}%")
+
+# La diferencia te muestra cuánto te engaña la distribución normal
+diferencia = var_95 - var_normal
+print(f"Error (curtosis no considerada): {diferencia:.2f}%")
+```
+
+Resultado en NVIDIA:
+- VaR percentil: -7.5%
+- VaR normal: -5.2%
+- Error: 2.3% (curtosis engaña!)
+
+
+10. CÓDIGO AVANZADO: CURTOSIS ROLLING
+═══════════════════════════════════════
+
+```python
+# Curtosis que cambia en el tiempo (ventana de 20 días)
+df['Curtosis_Rolling'] = df['Retorno'].rolling(window=20).kurt()
+
+# Gráficar
+import matplotlib.pyplot as plt
+
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8))
+
+# Retornos
+ax1.plot(df['Retorno'], color='blue', alpha=0.5)
+ax1.set_title('Retornos Diarios')
+ax1.set_ylabel('Retorno (%)')
+
+# Curtosis rolling
+ax2.plot(df['Curtosis_Rolling'], color='red', linewidth=2)
+ax2.axhline(y=3, color='black', linestyle='--', label='Curtosis Normal')
+ax2.fill_between(df.index, 3, df['Curtosis_Rolling'], 
+                 where=(df['Curtosis_Rolling'] >= 3), 
+                 alpha=0.3, color='red', label='Riesgo Elevado')
+ax2.set_title('Curtosis Rolling (20 días)')
+ax2.set_ylabel('Curtosis')
+ax2.legend()
+ax2.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+# Interpretación:
+# Cuando curtosis sube, espera sorpresas
+# Cuando curtosis baja, comportamiento más normal
+```
+
+
+11. RELACIÓN CON CRISIS Y CRASHES
+═══════════════════════════════════
+
+Durante mercados normales:
+Curtosis = 4-5 (alta pero manejable)
+
+Durante crisis:
+Curtosis = 10-15 (extremadamente alta!)
+
+¿Qué ocurre?
+→ Correlaciones cambian
+→ Volatilidad explota
+→ Todos se mueven en la misma dirección
+→ La diversificación deja de funcionar
+
+Ejemplo histórico:
+- Mar 2020 (COVID): Curtosis de SP500 fue ~15
+- Oct 1987 (Black Monday): Curtosis fue ~20
+- Sep 2008 (Crisis financiera): Curtosis fue ~18
+
+Lección:
+→ Tu análisis de 5 años puede no incluir una crisis
+→ Siempre asumir curtosis más alta que lo observado
+→ Preparar contingencias
+
+
+12. ERRORES COMUNES
+═════════════════════
+
+❌ "Curtosis 5 significa que hay 5x más eventos extremos"
+✅ Correcto: "Curtosis 5 significa 2 de curtosis ADICIONAL a lo normal"
+
+❌ "Si curtosis es baja, no hay riesgo"
+✅ Correcto: "Si curtosis es baja, el riesgo es más PREDECIBLE"
+
+❌ "La curtosis nunca cambia"
+✅ Correcto: "La curtosis cambia entre períodos. En crashes sube mucho"
+
+❌ "Puedo ignorar la curtosis si tengo STD baja"
+✅ Correcto: "Curtosis alta + STD baja = sorpresas en poca volatilidad"
+
+
+13. CHECKLIST: CÓMO USAR LA CURTOSIS
+═══════════════════════════════════════
+
+[ ] Calcula curtosis de tu activo
+[ ] ¿Es > 3 o < 3?
+[ ] Si es > 5: Necesitas stops más amplios
+[ ] Si es < 3: Puedes usar stops más ajustados
+[ ] Recalcula mensualmente
+[ ] Compara con otros activos
+[ ] Ajusta position sizing según curtosis
+[ ] En crisis, multiplica curtosis por 2-3
+
+
+14. CONCLUSIÓN
+═══════════════
+
+La curtosis te cuenta:
+"¿Con qué frecuencia me sorprenderás con movimientos extremos?"
+
+✅ Curtosis normal (3): Sorpresas raras
+✅ Curtosis alta (>5): Sorpresas frecuentes
+✅ Curtosis muy alta (>10): Crisis en desarrollo
+
+═══════════════════════════════════════════════════════════════════════════════

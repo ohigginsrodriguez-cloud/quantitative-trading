@@ -1,0 +1,224 @@
+═══════════════════════════════════════════════════════════════════════════════
+                          SESGO (SKEWNESS)
+═══════════════════════════════════════════════════════════════════════════════
+
+1. ¿QUÉ ES EL SESGO?
+═════════════════════
+
+El sesgo mide si una distribución está "inclinada" hacia un lado.
+
+Analógía:
+Si pones una caja en una mesa perfectamente centrada → Sesgo = 0
+Si la corres hacia la derecha → Sesgo positivo
+Si la corres hacia la izquierda → Sesgo negativo
+
+
+2. INTERPRETACIÓN SIMPLE
+═══════════════════════
+
+SESGO = 0
+→ Distribución simétrica (campana perfecta)
+→ Los datos están balanceados a ambos lados
+→ Ejemplo: Lanzar una moneda 100 veces
+
+SESGO > 0 (Positivo)
+→ Cola larga hacia la DERECHA
+→ Más datos pequeños, pocos datos MUY GRANDES
+→ Ejemplo: Precios de casas (la mayoría son normales, pocos mansiones)
+→ EN TRADING: Más ganancias pequeñas, pocos días de ganancias enormes
+
+SESGO < 0 (Negativo)
+→ Cola larga hacia la IZQUIERDA
+→ Más datos grandes, pocos datos MUY PEQUEÑOS
+→ Ejemplo: Edad de muerte (muchas cerca de 80, pocas a los 2 años)
+→ EN TRADING: Más pérdidas pequeñas, pocos días de pérdidas enormes
+
+
+3. RANGO DE VALORES
+═════════════════════
+
+-0.5 a 0.5:    Sesgo débil (casi simétrico)
+-1.0 a -0.5:   Sesgo negativo moderado
+0.5 a 1.0:     Sesgo positivo moderado
+> 1.0:         Sesgo fuerte
+< -1.0:        Sesgo negativo fuerte
+
+
+4. FÓRMULA
+═══════════
+
+Sesgo = Σ(xi - μ)³ / (n × σ³)
+
+Donde:
+- xi = cada dato
+- μ = promedio
+- n = número de datos
+- σ = desviación estándar
+- ³ = elevado al cubo
+- Σ = suma de todos
+
+¿Por qué al cubo?
+La parte (xi - μ)³ "amplifica" las desviaciones grandes
+Si el valor está a la derecha (positivo), lo hace aún más positivo
+Si está a la izquierda (negativo), lo hace aún más negativo
+
+
+5. CÓDIGO PYTHON
+═════════════════
+
+```python
+import pandas as pd
+import yfinance as yf
+
+# Descargar datos
+df = yf.download('NVDA', period='5y')
+
+# Calcular retornos
+df['Retorno'] = df['Close'].pct_change() * 100
+df = df.dropna()
+
+# Calcular sesgo
+sesgo = df['Retorno'].skew()
+print(f"Sesgo: {sesgo}")
+
+# Interpretación
+if sesgo > 0:
+    print("Sesgo POSITIVO: Más sorpresas alcistas")
+elif sesgo < 0:
+    print("Sesgo NEGATIVO: Más sorpresas bajistas")
+else:
+    print("Sesgo CERO: Distribución simétrica")
+```
+
+
+6. APLICACIÓN EN TRADING
+═══════════════════════════
+
+ESCENARIO A: Sesgo Positivo (Bullish)
+────────────────────────────────────
+
+Sesgo = +0.546 (como NVIDIA)
+
+Significa:
+- Días normales: cambios pequeños (±1%)
+- Sorpresas positivas: +15%, +20% (frecuentes)
+- Sorpresas negativas: -5% (raras)
+
+Estrategia:
+→ Mantén posiciones largas más tiempo
+→ Usa stops más amplios (espera sorpresas al alza)
+→ Evita shortes (el sesgo es contra ti)
+
+
+ESCENARIO B: Sesgo Negativo (Bearish)
+──────────────────────────────────────
+
+Sesgo = -0.546 (opuesto a NVIDIA)
+
+Significa:
+- Días normales: cambios pequeños (±1%)
+- Sorpresas positivas: +5% (raras)
+- Sorpresas negativas: -15%, -20% (frecuentes)
+
+Estrategia:
+→ Cuidado con posiciones largas
+→ Usa stops ajustados
+→ Los shorts son más seguros
+→ Prepárate para crashes
+
+
+7. COMPARACIÓN ENTRE ACTIVOS
+═════════════════════════════
+
+Supón que tienes:
+
+NVDA:  Sesgo = +0.546 (Bullish)
+TSLA:  Sesgo = -0.234 (Bearish)
+AAPL:  Sesgo = +0.012 (Neutral)
+BTC:   Sesgo = +0.789 (Muy bullish)
+
+Conclusión:
+→ BTC: Más probabilidad de ganancias sorpresas
+→ NVDA: Probabilidad moderada de ganancias sorpresas
+→ AAPL: Distribución equilibrada
+→ TSLA: Cuidado, más crashes inesperados
+
+
+8. COMBINACIÓN CON DESVIACIÓN ESTÁNDAR
+═══════════════════════════════════════
+
+STD Mide: "Qué tan dispersos están los datos"
+Sesgo Mide: "Hacia qué lado está la dispersión"
+
+Ejemplo:
+
+ACTIVO A:  STD = 3%, Sesgo = 0 (normal, simétrico)
+ACTIVO B:  STD = 3%, Sesgo = +0.5 (normal, pero más sorpresas al alza)
+
+Ambos tienen la misma volatilidad (STD), ¡pero el riesgo es diferente!
+
+B es mejor para largo plazo (las sorpresas te ayudan)
+A es más neutral
+
+
+9. ERRORES COMUNES
+═════════════════
+
+❌ "Si el sesgo es positivo, siempre gano"
+✅ Correcto: "Si el sesgo es positivo, las sorpresas tienden a ser al alza"
+
+❌ "Sesgo = 0 significa que no hay riesgo"
+✅ Correcto: "Sesgo = 0 significa distribución equilibrada, pero puedo perder igual"
+
+❌ "El sesgo nunca cambia"
+✅ Correcto: "El sesgo puede cambiar entre períodos. Recalcula cada trimestre"
+
+
+10. CÓDIGO AVANZADO: SESGO ROLLING
+════════════════════════════════════
+
+```python
+# Sesgo que cambia en el tiempo (ventana de 20 días)
+df['Sesgo_Rolling'] = df['Retorno'].rolling(window=20).skew()
+
+# Gráficar
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12, 6))
+plt.plot(df['Sesgo_Rolling'], label='Sesgo (20 días)', color='blue')
+plt.axhline(y=0, color='red', linestyle='--', label='Sesgo Neutral')
+plt.title('Evolución del Sesgo en el Tiempo')
+plt.legend()
+plt.show()
+
+# Esto te muestra:
+# - Períodos alcistas (sesgo > 0)
+# - Períodos bajistas (sesgo < 0)
+# - Cambios en el comportamiento del activo
+```
+
+
+11. CHECKLIST: CÓMO USAR EL SESGO
+═══════════════════════════════════
+
+Antes de entrar a un trade:
+
+[ ] Calcula el sesgo del activo
+[ ] ¿Es positivo o negativo?
+[ ] ¿Coincide con mi tesis (alcista/bajista)?
+[ ] Si el sesgo es opuesto, reconsidera tu trade
+[ ] Ajusta tu stop loss según el sesgo
+[ ] Usa sesgo para elegir entre activos similares
+
+
+12. CONCLUSIÓN
+═══════════════
+
+El sesgo te cuenta:
+"¿Hacia dónde están las sorpresas en este activo?"
+
+✅ Sesgo positivo: Espera sorpresas al alza
+✅ Sesgo negativo: Espera sorpresas a la baja
+✅ Sesgo cero: Distribución equilibrada
+
+═══════════════════════════════════════════════════════════════════════════════

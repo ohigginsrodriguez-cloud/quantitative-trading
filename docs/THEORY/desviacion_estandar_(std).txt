@@ -1,0 +1,10 @@
+1. Desviación Estándar Poblacional (Un solo número)
+
+Significado: Ese número te dice qué tan volátil es un activo en general. Si es muy alto, el activo es "nervioso"; si es bajo, es estable. No necesitas una columna nueva porque es un dato estadístico del periodo completo.
+
+2. Desviación Estándar "Rolling" (Ventana móvil)
+Esto es lo que harías si estuvieras construyendo un indicador (como las Bandas de Bollinger).
+
+Cómo se hace: Usas .rolling(window=20).std().
+
+Resultado: Aquí sí crearías una columna nueva, porque la volatilidad cambia cada día dependiendo de lo que pasó en las últimas semanas.

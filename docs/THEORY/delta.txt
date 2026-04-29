@@ -1,0 +1,7 @@
+1. ¿Qué es delta?
+
+En matemáticas y física, la letra griega Delta (triangulo) representa el cambio o la diferencia entre dos estados.
+En finanzas: Delta = Precio_{Hoy} - Precio_{Ayer}$.
+Si delta es positivo, el activo subió. 
+Si es negativo, bajó.
+Es la materia prima para casi todos los indicadores de "momentum" (fuerza del movimiento).

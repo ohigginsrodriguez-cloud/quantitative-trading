@@ -1,0 +1,778 @@
+═══════════════════════════════════════════════════════════════════════════════
+           TEORÍA COMPLETA: DISTRIBUCIONES Y ANÁLISIS ESTADÍSTICO
+                     Para Trading Cuantitativo (Nivel 1)
+═══════════════════════════════════════════════════════════════════════════════
+
+"No puedes tradear lo que no entiendes"
+- Tu histograma de NVIDIA te está mostrando algo importante
+- Necesitas aprender a LEERLO
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 1: ENTENDIENDO TU HISTOGRAMA
+═══════════════════════════════════════════════════════════════════════════════
+
+📊 LO QUE VES:
+
+Tu histograma tiene:
+- EJE X (Horizontal): Retorno (%)
+  Rango: -15% a +25%
+  
+- EJE Y (Vertical): Frecuencia (Días)
+  Máximo: ~170 días
+
+- LA FORMA: Parece una campana, pero inclinada hacia la DERECHA
+
+═══════════════════════════════════════════════════════════════════════════════
+
+🔍 CÓMO LEER UN HISTOGRAMA:
+
+Pregunta 1: "¿Dónde está el pico?"
+─────────────────────────────────
+Respuesta: En 0% (aprox)
+Significado: La mayoría de los días, NVIDIA subió/bajó alrededor de 0%
+Traducción: NVIDIA es "nerviosa" pero con tendencia neutral en el corto plazo
+
+
+Pregunta 2: "¿Es simétrico o está sesgado?"
+──────────────────────────────────────────
+Tu respuesta: ESTÁ SESGADO A LA DERECHA
+Por qué: Hay más barras altas en el lado positivo (0% a +15%)
+        que en el lado negativo (-15% a 0%)
+
+Ejemplo visual:
+NEGATIVO (Izquierda)     |     POSITIVO (Derecha)
+[pequeña montaña]        |     [montaña más grande]
+-15% a 0%                |     0% a +15%
+
+Significado: NVIDIA SUBE MÁS DE LO QUE BAJA
+
+
+Pregunta 3: "¿Hay colas largas o cortas?"
+─────────────────────────────────────────
+Respuesta: HAY COLAS LARGAS (especialmente a la derecha)
+Significa: Existen días EXCEPCIONALES (saltos de +15% a +25%)
+          que salen del patrón normal
+
+Peligro: Si confías solo en la "campana principal", te sorprenderá
+         cuando llegue un +20% inesperado
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 2: DESVIACIÓN ESTÁNDAR (STD DEV)
+═══════════════════════════════════════════════════════════════════════════════
+
+📌 CONCEPTO CLAVE:
+
+"La desviación estándar mide cuánto varían los datos alrededor del promedio"
+
+🧮 TUS NÚMEROS:
+
+Desviación Estándar = 3.25%
+Promedio = 0.25%
+
+¿QUÉ SIGNIFICA?
+
+Imagina NVIDIA como un péndulo:
+- Posición central (promedio): +0.25% diario
+- Rango normal: ±3.25% alrededor de eso
+
+Esto se interpreta en "desviaciones":
+
+┌─────────────────────────────────────────┐
+│ REGLA DE LA CAMPANA (Normal Distribution)│
+├─────────────────────────────────────────┤
+│ 68% de los días: entre -3% y +3.5%     │ ← 1 STD
+│ 95% de los días: entre -6% y +6.75%    │ ← 2 STD
+│ 99.7% de los días: entre -10% y +10%   │ ← 3 STD
+└─────────────────────────────────────────┘
+
+EN TÉRMINOS PRÁCTICOS:
+
+Si hoy NVIDIA baja -5%:
+- Es una caída MODERADA (1-2 STD por debajo de la media)
+- Esperamos que se recupere (media reversion)
+
+Si hoy NVIDIA baja -12%:
+- Es un CRASH (3-4 STD por debajo)
+- Evento raro pero posible
+- Algo importante pasó
+
+Si hoy NVIDIA sube +20%:
+- Es INUSUAL (5+ STD por encima)
+- Casi nunca debería pasar
+- Si pasa, hay una noticia importante
+
+
+🎯 CÓMO LO USAS EN TRADING:
+
+Tu estrategia (bloque 5) dice:
+```
+Signal = si Retorno > Desviación Estándar
+```
+
+Esto significa:
+Signal = si Retorno > 3.25%
+
+En español:
+"Compra cuando NVIDIA se mueve más de lo normal en UN DÍA"
+
+Resultado: 150 veces en 5 años = ~30 veces por año
+         = ~2.4 veces por mes
+         = ~1 semana cada vez
+
+✅ WIN RATE: 56%
+✅ EXPECTANCY: 0.356% por trade
+
+Interpretación: "Cuando NVIDIA tiene un salto > 3.25%, 
+                al día siguiente tiende a subir 0.68% en promedio.
+                56% de las veces ganas dinero."
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 3: SESGO (SKEWNESS)
+═══════════════════════════════════════════════════════════════════════════════
+
+📌 CONCEPTO CLAVE:
+
+"El sesgo mide si la distribución está inclinada hacia un lado"
+
+🧮 TUS NÚMEROS:
+
+Sesgo = 0.546 (POSITIVO)
+
+¿QUÉ SIGNIFICA?
+
+┌──────────────────────────────────────────┐
+│ SESGO = 0 (Distribución Simétrica)       │
+│ [Campana perfecta]                       │
+│ Ejemplo: Moneda al aire (50/50)         │
+└──────────────────────────────────────────┘
+
+┌──────────────────────────────────────────┐
+│ SESGO > 0 (Sesgo Positivo - Derecha)    │
+│ [Cola larga hacia la DERECHA]            │
+│ Más pequeños cambios negativos           │
+│ + Pocos cambios ENORMEMENTE positivos    │
+│                                          │
+│ Ejemplo: NVIDIA (0.546)                 │
+└──────────────────────────────────────────┘
+
+┌──────────────────────────────────────────┐
+│ SESGO < 0 (Sesgo Negativo - Izquierda) │
+│ [Cola larga hacia la IZQUIERDA]         │
+│ Más pequeños cambios positivos          │
+│ + Pocos cambios ENORMEMENTE negativos   │
+│                                          │
+│ Ejemplo: Crash de mercado               │
+└──────────────────────────────────────────┘
+
+🎯 INTERPRETACIÓN PRÁCTICA:
+
+NVIDIA Sesgo = +0.546 (Moderadamente positivo)
+
+Esto significa:
+1. La mayoría de los días NVIDIA tiene cambios modestos (±1-2%)
+2. Ocasionalmente hay un día EXCEPCIONAL con +15% o +20%
+3. Los días negativos extremos (-15%) son raros
+4. **EN CONCLUSIÓN: NVIDIA tiene sesgo alcista (bullish)**
+
+¿Por qué importa?
+─────────────────
+Si el sesgo fuera NEGATIVO:
+- Deberías esperar más crashes inesperados
+- Tu estrategia sería MÁS ARRIESGADA
+
+Como el sesgo es POSITIVO:
+- Esperas más sorpresas positivas
+- El riesgo es menor (no hay colas negativas largas)
+- **Tu estrategia es FAVORABLE**
+
+VALORES DE REFERENCIA:
+┌──────────────────────────────────────┐
+│ -0.5 a 0.5:  Moderadamente simétrico │
+│ 0.5 a 1.0:   Sesgo positivo moderado │
+│ > 1.0:       Sesgo positivo fuerte   │
+│              (Altamente bullish)     │
+│                                      │
+│ Tu valor (0.546): BIEN - Bullish mod │
+└──────────────────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 4: CURTOSIS (KURTOSIS) - "FAT TAILS"
+═══════════════════════════════════════════════════════════════════════════════
+
+📌 CONCEPTO CLAVE:
+
+"La curtosis mide qué tan 'pesadas' son las colas (probabilidad de eventos extremos)"
+
+🧮 TUS NÚMEROS:
+
+Curtosis = 4.72
+
+¿QUÉ SIGNIFICA?
+
+┌──────────────────────────────────────────┐
+│ CURTOSIS = 3 (Distribución Normal)      │
+│ [Campana estándar de Gauss]             │
+│ Pocos eventos extremos                  │
+│ Ejemplo: Altura de personas             │
+└──────────────────────────────────────────┘
+
+┌──────────────────────────────────────────┐
+│ CURTOSIS > 3 (Leptocúrtica)             │
+│ [Pico muy alto, colas muy gordas]       │
+│ MUCHOS eventos extremos (crashes)       │
+│ Ejemplo: Mercado financiero             │
+│          Tu NVIDIA (4.72)               │
+└──────────────────────────────────────────┘
+
+┌──────────────────────────────────────────┐
+│ CURTOSIS < 3 (Platicúrtica)             │
+│ [Pico bajo, colas delgadas]             │
+│ Pocos eventos extremos                  │
+│ Ejemplo: Datos muy estables             │
+└──────────────────────────────────────────┘
+
+🎯 INTERPRETACIÓN PRÁCTICA:
+
+Curtosis de NVIDIA = 4.72
+
+Esto significa:
+1. Hay MUCHA PROBABILIDAD de días EXTREMOS (+/-15% o más)
+2. No puedes confiar en la "campana simple"
+3. Necesitas protección contra saltos inesperados
+
+EN COMPARACIÓN:
+─────────────────
+Normal (Curtosis 3):    10% de probabilidad de saltos > 3 STD
+NVIDIA (Curtosis 4.72): ~15-20% de probabilidad de saltos > 3 STD
+
+Traducción: NVIDIA "sorprende" más de lo que un modelo simple predice
+
+¿POR QUÉ PASA ESTO?
+─────────────────
+NVIDIA es una acción de TECH-AI:
+- Noticias importantes tienen impacto grande
+- Resultados de earnings → +/- 10%
+- Cambios en la industria AI → saltos bruscos
+- Por eso la curtosis es alta (4.72 vs 3.0)
+
+RIESGO PARA TU ESTRATEGIA:
+────────────────────────
+Tu estrategia filtra: "Si Retorno > 3.25%"
+
+Con curtosis alta, ESTOS eventos ocurren más:
+- Primer día: +5% (entra en tu estrategia)
+- Segundo día: -8% (sorpresa adversa)
+- Tercero: +12% (evento extremo)
+
+**CONCLUSIÓN**: Necesitas gestión de riesgo robusta
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 5: CÓMO INTEGRAR TODO (STD + SESGO + CURTOSIS)
+═══════════════════════════════════════════════════════════════════════════════
+
+📊 "ANATOMÍA" COMPLETA DE NVIDIA:
+
+┌─────────────────────────────────────────────────────┐
+│ MÉTRICA         │ VALOR    │ INTERPRETACIÓN          │
+├─────────────────────────────────────────────────────┤
+│ STD             │ 3.25%    │ Volatilidad moderada    │
+│ Sesgo           │ +0.546   │ Sesgo positivo (bullish)│
+│ Curtosis        │ 4.72     │ Colas gordas (riesgoso) │
+│ Promedio        │ +0.25%   │ Tendencia ligeramente   │
+│                 │          │ alcista (+ por día)     │
+│ Win Rate        │ 56%      │ Estrategia funciona     │
+│ Expectancy      │ +0.356%  │ Ganancia esperada/trade │
+└─────────────────────────────────────────────────────┘
+
+¿QUÉ TE DICE TODO ESTO COMBINADO?
+
+NVIDIA es:
+✅ Moderadamente volátil (STD 3.25%)
+✅ Tendencia alcista (Sesgo + Promedio positivo)
+⚠️ Propenso a saltos extremos (Curtosis alta)
+✅ Tu estrategia tiene edge positivo (Win rate 56%, Expectancy +0.356%)
+
+PERO CON CUIDADO:
+─────────────────
+La alta curtosis significa:
+- Un día pierde 3 veces lo que ganaste en 10 trades
+- Por eso NECESITAS position sizing
+- No puedes arriesgar el mismo % en cada trade
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 6: CÁLCULOS QUE DEBES ENTENDER
+═══════════════════════════════════════════════════════════════════════════════
+
+1. DESVIACIÓN ESTÁNDAR (STD)
+────────────────────────────
+
+Fórmula conceptual:
+STD = √(promedio de (cada dato - media)²)
+
+En tu código:
+```python
+desviacion_estandar = df_nvidia['Retorno'].std()
+# Resultado: 3.254814682810059
+```
+
+¿Qué hace pandas aquí?
+1. Calcula el promedio de los retornos (0.25%)
+2. Resta ese promedio a CADA retorno
+3. Eleva cada diferencia al cuadrado
+4. Saca el promedio de todos esos cuadrados
+5. Toma la raíz cuadrada
+
+Ejemplo simplificado:
+Si tienes retornos: [0%, 2%, -1%, 1%]
+Media: 0.5%
+
+Diferencias al cuadrado:
+(0-0.5)² = 0.25
+(2-0.5)² = 2.25
+(-1-0.5)² = 2.25
+(1-0.5)² = 0.25
+
+Promedio: (0.25+2.25+2.25+0.25)/4 = 1.25
+Raíz: √1.25 = 1.12%
+
+STD = 1.12%
+
+
+2. SESGO (SKEWNESS)
+───────────────────
+
+Fórmula conceptual (más compleja):
+Sesgo = (suma de (cada dato - media)³) / (n × STD³)
+
+Intuición:
+- Si sesgo > 0: los datos están más dispersos a la DERECHA
+- Si sesgo < 0: los datos están más dispersos a la IZQUIERDA
+- Si sesgo = 0: distribución simétrica
+
+En tu código:
+```python
+sesgo = df_nvidia['Retorno'].skew()
+# Resultado: 0.545846882549258
+```
+
+Interpretación:
+0.546 significa: hay un poco más de probabilidad de retornos altos
+                 que de retornos bajos (bullish bias)
+
+
+3. CURTOSIS (KURTOSIS)
+──────────────────────
+
+Fórmula conceptual:
+Curtosis = (suma de (cada dato - media)⁴) / (n × STD⁴) - 3
+
+La resta de 3 es porque:
+- Distribución normal = curtosis 3
+- Comparamos "cuánto más extrema" es que lo normal
+
+En tu código:
+```python
+curtosis = df_nvidia['Retorno'].kurt()
+# Resultado: 4.7245291150080515
+```
+
+Interpretación:
+4.72 - 3 = 1.72 "más curtosis que lo normal"
+Significa: 72% más probabilidad de eventos extremos
+          que en una distribución normal
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 7: APLICACIÓN A TU ESTRATEGIA
+═══════════════════════════════════════════════════════════════════════════════
+
+🎯 RESUMAMOS TU CÓDIGO:
+
+```python
+# Signal: Retorno > 3.25% (mayor que STD)
+df_nvidia['Signal'] = df_nvidia['Retorno'] > desviacion_estandar
+
+# Resultado: 150 signals en 5 años
+# = ~30 por año
+# = ~1 cada 12 días
+```
+
+¿POR QUÉ FUNCIONA?
+
+Según tu histograma:
+- La mayoría de días: retornos entre -3% y +3%
+- Días "especiales" (> 3.25%): aproximadamente 12% de los días (150/1250)
+
+CUANDO OCURRE UN SALTO > 3.25%:
+──────────────────────────────
+
+Hay dos escenarios:
+
+ESCENARIO 1: Sobrerreacción (60% de las veces)
+┌─────────────────────────────────────────┐
+│ Día 1: NVIDIA sube 5% (salto raro)      │
+│ Día 2: Se corrige, sube 0.7% (normal)  │
+│ → Tu estrategia gana                    │
+└─────────────────────────────────────────┘
+
+ESCENARIO 2: Cambio de tendencia (40% de las veces)
+┌─────────────────────────────────────────┐
+│ Día 1: NVIDIA sube 5% (inicio de rally) │
+│ Día 2: Continúa subiendo 1.5%           │
+│ → Tu estrategia pierde                  │
+└─────────────────────────────────────────┘
+
+TU WIN RATE (56%) CONFIRMA:
+- ESCENARIO 1 (sobrerreacción) ocurre más
+- NVIDIA tiende a revertirse después de saltos
+
+ESTO ES MEAN REVERSION
+= Un patrón explotable
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 8: CÓMO MEJORAR TU ANÁLISIS
+═══════════════════════════════════════════════════════════════════════════════
+
+PASO 1: AÑADE ANÁLISIS DE PERCENTILES
+──────────────────────────────────────
+
+```python
+# Cuartiles
+q1 = df_nvidia['Retorno'].quantile(0.25)  # 25% de los datos son menores
+q2 = df_nvidia['Retorno'].quantile(0.50)  # 50% (mediana)
+q3 = df_nvidia['Retorno'].quantile(0.75)  # 75% de los datos son menores
+q95 = df_nvidia['Retorno'].quantile(0.95) # 95% de los datos son menores
+
+# Esto te dice:
+# "Si quiero capturar el 95% más conservador, compro cuando
+#  el retorno supera tal valor"
+```
+
+PASO 2: COMPARA CON DISTRIBUCIÓN NORMAL
+──────────────────────────────────────
+
+```python
+# Si la curtosis fuera 3 (normal), ¿cuál sería la probabilidad 
+# de un retorno > 3.25%?
+
+# Con curtosis 3: ~0.1% (muy raro)
+# Con curtosis 4.72: ~0.3% (3x más probable)
+
+# Esto confirma: hay más "sorpresas" en NVIDIA
+```
+
+PASO 3: ANALIZA POR PERÍODOS
+────────────────────────────
+
+```python
+# ¿Es el sesgo/curtosis igual en todo el período?
+# O cambió después de ciertos eventos?
+
+df['year'] = df.index.year
+df.groupby('year')['Retorno'].agg(['std', 'skew', 'kurt'])
+
+# Resultado: Verás que durante crashes, la curtosis sube
+```
+
+PASO 4: CÁLCULO DE RIESGO
+─────────────────────────
+
+```python
+# Valor en Riesgo (VaR) al 95% de confianza
+var_95 = df_nvidia['Retorno'].quantile(0.05)
+# Si tienes $10,000 y todo se va en NVIDIA:
+# Pérdida esperada: $10,000 * var_95
+
+# Esto te dice cuánto podrías perder en el "peor día" (95% confianza)
+```
+
+PASO 5: EXPECTANCY (YA LO HACES)
+────────────────────────────────
+
+```python
+# Tu cálculo está bien:
+# Expectancy = (Win% × Avg_Win) - (Loss% × Avg_Loss)
+# Expectancy = 0.356% por trade
+
+# Esto significa:
+# Si repites esta estrategia 100 veces:
+# Ganancias esperadas: 100 × 0.356% = 35.6% (compuesto)
+```
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 9: FÓRMULAS QUE NECESITAS MEMORIZAR
+═══════════════════════════════════════════════════════════════════════════════
+
+1️⃣ DESVIACIÓN ESTÁNDAR
+═════════════════════
+
+σ = √( Σ(xi - μ)² / n )
+
+Donde:
+- σ = desviación estándar
+- xi = cada dato
+- μ = promedio
+- n = número de datos
+- √ = raíz cuadrada
+- Σ = suma de todos
+
+En Python:
+```python
+std = df['Retorno'].std()
+```
+
+2️⃣ SESGO (SKEWNESS)
+═════════════
+
+S = Σ(xi - μ)³ / (n × σ³)
+
+Donde:
+- S = sesgo
+- ³ = elevado al cubo
+- El resto igual que antes
+
+Interpretación:
+- S > 0: cola larga a la derecha (bullish)
+- S < 0: cola larga a la izquierda (bearish)
+- S = 0: simétrico
+
+En Python:
+```python
+skew = df['Retorno'].skew()
+```
+
+3️⃣ CURTOSIS (KURTOSIS)
+══════════════════════
+
+K = [Σ(xi - μ)⁴ / (n × σ⁴)] - 3
+
+Donde:
+- K = curtosis
+- ⁴ = elevado a la cuarta potencia
+- El "-3" es para comparar con lo normal
+
+Interpretación:
+- K > 3: colas gordas (fat tails) - más crashes
+- K = 3: distribución normal
+- K < 3: colas delgadas - muy estable
+
+En Python:
+```python
+kurt = df['Retorno'].kurt()
+```
+
+4️⃣ RETORNO PORCENTUAL
+═════════════════════
+
+pct_change = [(P_t - P_t-1) / P_t-1] × 100
+
+Donde:
+- P_t = precio hoy
+- P_t-1 = precio ayer
+
+Interpretación:
+- Si retorno > STD: evento excepcional
+- Si retorno > 2×STD: muy excepcional
+- Si retorno > 3×STD: casi imposible (busca fraude o error)
+
+En Python:
+```python
+df['Retorno'] = df['Close'].pct_change() * 100
+```
+
+5️⃣ WIN RATE
+═════════
+
+WR = (Trades Ganadores / Total Trades) × 100
+
+Donde:
+- WR = porcentaje de trades ganadores
+- Válido si WR > 50% para estrategia rentable
+
+Tu valor: 56% (bueno)
+
+En Python:
+```python
+winners = (just_signals['Tomorrow_return'] > 0).sum()
+win_rate = (winners / len(just_signals)) * 100
+```
+
+6️⃣ EXPECTANCY (ESPERANZA MATEMÁTICA)
+════════════════════════════════════
+
+E = (WR × Avg_Win) - ((1-WR) × Avg_Loss)
+
+Donde:
+- WR = win rate
+- Avg_Win = ganancia promedio en trades ganadores
+- Avg_Loss = pérdida promedio en trades perdedores
+
+Interpretación:
+- E > 0: estrategia rentable
+- E < 0: estrategia no rentable
+- E = 0: neutral
+
+Tu valor: 0.356% (bueno para corto plazo)
+
+En Python:
+```python
+avg_earnings = just_signals[just_signals['Tomorrow_return'] > 0]['Tomorrow_return'].mean()
+avg_loss = just_signals[just_signals['Tomorrow_return'] < 0]['Tomorrow_return'].abs().mean()
+expectancy = (0.56 * avg_earnings) - (0.44 * avg_loss)
+```
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 10: CHECKLIST - QUÉ DEBE DECIRTE TU ANÁLISIS
+═══════════════════════════════════════════════════════════════════════════════
+
+Cuando hagas análisis de un activo, SIEMPRE responde:
+
+[ ] 1. ¿Cuál es la STD? 
+    → Esto te dice volatilidad esperada
+
+[ ] 2. ¿Es sesgo positivo o negativo?
+    → Esto te dice si hay bias alcista o bajista
+
+[ ] 3. ¿Cuál es la curtosis? ¿Mayor o menor que 3?
+    → Esto te dice si hay sorpresas extremas frecuentes
+
+[ ] 4. ¿Cómo se ve el histograma?
+    → ¿Es simétrico? ¿Tiene colas largas? ¿Una o dos colas?
+
+[ ] 5. ¿El sesgo coincide con el histograma?
+    → Si sesgo > 0, ¿ves la cola larga a la derecha?
+
+[ ] 6. ¿Hay períodos donde estos valores cambian?
+    → ¿Fue diferente en el último año vs 5 años?
+
+[ ] 7. ¿Mi estrategia aprovecha estas características?
+    → ¿Compro cuando hay sesgo? ¿Evito cuando hay curtosis alta?
+
+[ ] 8. ¿Cuál es mi expectancy?
+    → ¿Es positivo? ¿Es mejor que buy-and-hold?
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 11: ERRORES COMUNES QUE COMETEN LOS PRINCIPIANTES
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ ERROR 1: Confundir STD con "Volatilidad"
+═════════════════════════════════════════
+
+Incorrecto:
+"STD es 3.25%, entonces NVIDIA se mueve 3.25% diarios"
+
+Correcto:
+"STD es 3.25%, entonces NVIDIA se mueve ±3.25% alrededor de su 
+promedio (+0.25%), lo que significa entre -3% y +3.5% generalmente."
+
+
+❌ ERROR 2: Pensar que "Normal Distribution" = Mercado
+═════════════════════════════════════════════════════
+
+Incorrecto:
+"Mi histograma parece una campana, así que puedo usar la regla normal"
+
+Correcto:
+"Mi histograma parece una campana PERO tiene curtosis 4.72 (no 3),
+así que hay más eventos extremos que lo normal. Debo planificar para eso."
+
+
+❌ ERROR 3: Ignorar el sesgo en tu estrategia
+═════════════════════════════════════════════
+
+Incorrecto:
+"El sesgo es +0.546, pero mi estrategia es neutral"
+
+Correcto:
+"El sesgo es +0.546, así que NVIDIA tiende a sorpresas al alza.
+Debo ajustar mi stop loss para no salir temprano en rallies."
+
+
+❌ ERROR 4: Usar expectancy como "Ganancia Garantizada"
+═══════════════════════════════════════════════════════
+
+Incorrecto:
+"Expectancy 0.356%, así que gano 0.356% cada día"
+
+Correcto:
+"Expectancy 0.356% por signal (150 al año = ~0.11% anual esperado).
+Pero con draw downs, volatilidad, y cambios de mercado, 
+el resultado real será diferente."
+
+
+❌ ERROR 5: Analizar 5 años de datos sin considerar cambios
+═══════════════════════════════════════════════════════════
+
+Incorrecto:
+"Estos números son válidos para siempre"
+
+Correcto:
+"Estos números son de 5 años pasados. NVIDIA cambió mucho en 2023.
+Debo recalcular cada trimestre para ver si la estrategia sigue siendo válida."
+
+
+═══════════════════════════════════════════════════════════════════════════════
+PARTE 12: RESUMEN PRÁCTICO PARA TU SIGUIENTE PASO
+═══════════════════════════════════════════════════════════════════════════════
+
+TU CÓDIGO ACTUAL:
+─────────────────
+
+Calcula:
+✅ STD = 3.25%
+✅ Sesgo = +0.546 (bullish)
+✅ Curtosis = 4.72 (sorpresas extremas)
+
+Define estrategia:
+✅ "Compra cuando Retorno > 3.25%"
+✅ Win Rate = 56%
+✅ Expectancy = +0.356%
+
+ESTO ESTÁ BIEN, PERO TE FALTA:
+
+❌ Análisis de rolling (¿cambió en el tiempo?)
+❌ Comparación con otros activos (¿NVIDIA es especial?)
+❌ Risk management (¿Cuánto debo arriesgar?)
+❌ Backtesting con costos (comisiones, slippage)
+❌ Out-of-sample testing (¿funciona en datos nuevos?)
+
+PRÓXIMO PASO (Para Nivel 1 completo):
+───────────────────────────────────────
+
+1. Repite este análisis con 2-3 activos más (Tesla, Apple, Bitcoin)
+2. Compara: ¿Quién tiene STD mayor? ¿Sesgo positivo?
+3. Crea histogramas para los 3-4 activos
+4. Responde: "¿Cuál es el mejor para mi estrategia?"
+5. Propón: "¿Cómo la mejoraría?"
+
+
+═══════════════════════════════════════════════════════════════════════════════
+CONCLUSIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+Tu histograma de NVIDIA te está contando una historia:
+
+"Soy un activo moderadamente volátil, con sesgo alcista,
+ y ocasionalmente tengo saltos extremos inesperados.
+ Cuando me muevo mucho en un día, mañana suelo corregirme.
+ 56% de esas correcciones son a mi favor."
+
+✅ TU ESTRATEGIA ENTIENDE ESTA HISTORIA
+✅ TU EXPECTANCY LO CONFIRMA
+
+Ahora:
+1. Aprende esto con 3-4 activos más
+2. Entiende POR QUÉ cada uno tiene distinta distribución
+3. Adapta tu estrategia a cada uno
+4. LUEGO lleva a backtesting profesional (Nivel 2-3)
+
+═══════════════════════════════════════════════════════════════════════════════
