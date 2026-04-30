@@ -6,7 +6,7 @@ def calculate_stats(series):
     std = series.std()
     skew = series.skew()
     kurt = series.kurt()
-    return{'mean': mean, '\nstd':  std, '\nskew': skew, '\nkurt': kurt}
+    return{'mean': mean, 'std': std, 'skew': skew, 'kurt': kurt}
 
 def get_percentiles(series):
     """Calculate percentiles of a series"""
