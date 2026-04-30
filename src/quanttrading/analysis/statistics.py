@@ -14,7 +14,7 @@ def get_percentiles(series):
     p25 = series.quantile(0.25)
     p75 = series.quantile(0.75)
     p95 = series.quantile(0.95)
-    return {'p05': p05, '\np25': p25, '\np75': p75, '\np95': p95}
+    return {'p05': p05, 'p25': p25, 'p75': p75, 'p95': p95}
 
 def detect_outliers(series, thereshold=3):
     """
