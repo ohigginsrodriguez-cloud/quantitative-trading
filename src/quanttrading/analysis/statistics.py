@@ -16,7 +16,7 @@ def get_percentiles(series):
     p95 = series.quantile(0.95)
     return {'p05': p05, 'p25': p25, 'p75': p75, 'p95': p95}
 
-def detect_outliers(series, thereshold=3):
+def detect_outliers(series, threshold=3):
     """
     Detect outliers using standard deviation method.
     Returns boolean series where True = outlier
@@ -24,4 +24,4 @@ def detect_outliers(series, thereshold=3):
     mean = series.mean()
     std = series.std()
     distance = (series - mean).abs() /std
-    return distance > thereshold
+    return distance > tereshold
