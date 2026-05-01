@@ -1,4 +1,4 @@
-from .visualization import plot_histogram, plot_rolling_statistics, plot_time_series
+from .visualization import plot_autocorrelation, plot_histogram, plot_rolling_statistics, plot_time_series
 from .statistics import calculate_stats, get_percentiles, detect_outliers
 import pandas as pd
 
@@ -38,8 +38,12 @@ def full_analysis(df, ticker, window, threshold=3):
     # 6. PLOT ROLLING STATISTICS
     print("Plotting rolling statistics...")
     plot_rolling_statistics(df, window=window)
-    
-    # 7. SHOW OUTLIERS
+
+    # 7. PLOT AUTOCORRELATION
+    print("Plotting autocorrelation...")
+    plot_autocorrelation(df['Return'], lags=50)
+ 
+    # 8. SHOW OUTLIERS
     if outliers.sum() > 0:
         print(f"\nOutlier details (top 10):")
         outlier_days = df[outliers][['Return']].copy()

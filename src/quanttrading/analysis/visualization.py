@@ -1,44 +1,114 @@
+from pandas.plotting import autocorrelation_plot
 import matplotlib.pyplot as plt
 import pandas as pd
 
 def plot_histogram(returns, title='Returns Distribution'):
-
-    plt.figure(figsize=(12, 6))
+    """Plot histogram of returns with statistical lines"""
+    
+    fig, ax = plt.subplots(figsize=(12, 6))
     plt.style.use('dark_background')
-    plt.hist(returns, bins=50, color='white', edgecolor='black')
-    plt.axvline(0, color='red', linestyle='-', linewidth=2)
-    plt.grid(True, alpha=0.3)
+    
+    # Histograma
+    ax.hist(returns, bins=50, color='white', edgecolor='black', alpha=0.7)
+    
+    # Líneas de referencia
+    mean = returns.mean()
+    std = returns.std()
+    
+    ax.axvline(mean, color='red', linestyle='-', linewidth=2, label=f'Mean: {mean:.4f}')
+    ax.axvline(mean + std, color='blue', linestyle='--', linewidth=1.5, label=f'+1 STD')
+    ax.axvline(mean - std, color='blue', linestyle='--', linewidth=1.5, label=f'-1 STD')
+    
+    ax.set_title(title, fontsize=14)
+    ax.set_xlabel('Returns (%)')
+    ax.set_ylabel('Frequency')
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    
     plt.tight_layout()
     plt.show()
 
-
 def plot_time_series(df, title='Price Analysis'):
-    fig, axes = plt.subplots(3, 1, figsize=(14, 10))
-
-    #PRICE
-    axes[0].plot(df. index, df['Close'], color='blue', linewidth=1)
-    axes[0].set_title('Pice over time')
+    """Plot price, returns, and volume with better spacing"""
+    
+    has_volume = 'Volume' in df.columns and df['Volume'].sum() > 0
+    n_plots = 3 if has_volume else 2
+    
+    fig, axes = plt.subplots(n_plots, 1, figsize=(14, 12), sharex=True)
+    
+    # PRICE
+    axes[0].plot(df.index, df['Close'], color='blue', linewidth=1)
+    axes[0].set_title('Price Over Time', fontsize=12)
     axes[0].set_ylabel('Price')
-
-    #RETURNS
-    axes[1].bar(df.index, df['Return'], color='green', alpha=1, linewidth=0.02)
+    axes[0].grid(True, alpha=0.3)
+    
+    # RETURNS
+    axes[1].bar(df.index, df['Return'], color='green', alpha=0.7, width=1)
     axes[1].axhline(y=0, color='red', linestyle='-', alpha=0.5)
-    axes[1].set_title('Daily Returns')
-    axes[1].set_ylabel('Returns (%)')
+    axes[1].set_title('Daily Returns', fontsize=12)
+    axes[1].set_ylabel('Return (%)')
     axes[1].grid(True, alpha=0.3)
-
-    #VOLUME
-    axes[2].bar(df.index, df['Volume'], color='orange', alpha=0.6, linewidth=0.02)
-    axes[2].grid(True, alpha=0.3)
-    axes[2].set_ylabel('Volume')
-    axes[2].set_title('Volume')
-
+    
+    # VOLUME
+    if has_volume:
+        axes[2].bar(df.index, df['Volume'], color='orange', alpha=0.6, width=1)
+        axes[2].set_title('Volume', fontsize=12)
+        axes[2].set_ylabel('Volume')
+        axes[2].grid(True, alpha=0.3)
+    
     plt.tight_layout()
-    plt.shoow()
+    plt.show()
 
-def plot_rolling_statistics(df, window):
-    df['std_30'] = df['Return'].rolling(window).std()
-    df['mean_30'] = df['Return'].rolling(window).mean()
-    df['skew_30'] = df['Return'].rolling(window).skew()
+def plot_rolling_statistics(df, window=30):
+    """Plot rolling volatility, mean, and skewness"""
+    
+    # Calcular rolling stats
+    df_copy = df.copy()
+    df_copy['std_rolling'] = df_copy['Return'].rolling(window).std()
+    df_copy['mean_rolling'] = df_copy['Return'].rolling(window).mean()
+    df_copy['skew_rolling'] = df_copy['Return'].rolling(window).skew()
+    
+    fig, axes = plt.subplots(3, 1, figsize=(14, 10))
+    
+    # VOLATILITY
+    axes[0].plot(df_copy.index, df_copy['std_rolling'], color='red', linewidth=1, label=f'STD ({window}d)')
+    axes[0].set_title(f'Rolling Volatility ({window} days)', fontsize=12)
+    axes[0].set_ylabel('STD (%)')
+    axes[0].grid(True, alpha=0.3)
+    axes[0].legend()
+    
+    # MEAN
+    axes[1].plot(df_copy.index, df_copy['mean_rolling'], color='green', linewidth=1, label=f'Mean ({window}d)')
+    axes[1].set_title(f'Rolling Mean Return ({window} days)', fontsize=12)
+    axes[1].set_ylabel('Mean (%)')
+    axes[1].grid(True, alpha=0.3)
+    axes[1].legend()
+    
+    # SKEWNESS
+    axes[2].plot(df_copy.index, df_copy['skew_rolling'], color='blue', linewidth=1, label=f'Skew ({window}d)')
+    axes[2].axhline(y=0, color='red', linestyle='--', alpha=0.5)
+    axes[2].set_title(f'Rolling Skewness ({window} days)', fontsize=12)
+    axes[2].set_ylabel('Skew')
+    axes[2].grid(True, alpha=0.3)
+    axes[2].legend()
+    
+    plt.tight_layout()
+    plt.show()
 
-    +
+def plot_autocorrelation(returns, lags=50):
+    """Plot autocorrelation of returns and absolute returns"""
+    
+    fig, axes = plt.subplots(2, 1, figsize=(14, 8))
+    
+    # Returns autocorrelation
+    autocorrelation_plot(returns, ax=axes[0], lags=lags)
+    axes[0].set_title('Autocorrelation of Returns')
+    axes[0].set_ylabel('Autocorrelation')
+    
+    # Absolute returns (volatility clustering)
+    autocorrelation_plot(returns.abs(), ax=axes[1], lags=lags)
+    axes[1].set_title('Autocorrelation of Absolute Returns (Volatility Clustering)')
+    axes[1].set_ylabel('Autocorrelation')
+    
+    plt.tight_layout()
+    plt.show()

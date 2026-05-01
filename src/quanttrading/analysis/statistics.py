@@ -24,4 +24,4 @@ def detect_outliers(series, threshold=3):
     mean = series.mean()
     std = series.std()
     distance = (series - mean).abs() /std
-    return distance > tereshold
+    return distance > threshold
