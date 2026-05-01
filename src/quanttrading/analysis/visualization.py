@@ -1,4 +1,4 @@
-from pandas.plotting import autocorrelation_plot
+from statsmodels.graphics.tsaplots import plot_acf
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -95,20 +95,23 @@ def plot_rolling_statistics(df, window=30):
     plt.tight_layout()
     plt.show()
 
-def plot_autocorrelation(returns, lags=50):
+def plot_autocorrelation(returns, nlags=50):
     """Plot autocorrelation of returns and absolute returns"""
+    from statsmodels.graphics.tsaplots import plot_acf
     
     fig, axes = plt.subplots(2, 1, figsize=(14, 8))
     
     # Returns autocorrelation
-    autocorrelation_plot(returns, ax=axes[0], lags=lags)
+    plot_acf(returns.dropna(), lags=nlags, ax=axes[0], alpha=0.05)
     axes[0].set_title('Autocorrelation of Returns')
     axes[0].set_ylabel('Autocorrelation')
+    axes[0].grid(True, alpha=0.3)
     
     # Absolute returns (volatility clustering)
-    autocorrelation_plot(returns.abs(), ax=axes[1], lags=lags)
+    plot_acf(returns.abs().dropna(), lags=nlags, ax=axes[1], alpha=0.05)
     axes[1].set_title('Autocorrelation of Absolute Returns (Volatility Clustering)')
     axes[1].set_ylabel('Autocorrelation')
+    axes[1].grid(True, alpha=0.3)
     
     plt.tight_layout()
     plt.show()

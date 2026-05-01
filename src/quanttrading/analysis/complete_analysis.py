@@ -41,7 +41,7 @@ def full_analysis(df, ticker, window, threshold=3):
 
     # 7. PLOT AUTOCORRELATION
     print("Plotting autocorrelation...")
-    plot_autocorrelation(df['Return'], lags=50)
+    plot_autocorrelation(df['Return'], nlags=50)
  
     # 8. SHOW OUTLIERS
     if outliers.sum() > 0:
