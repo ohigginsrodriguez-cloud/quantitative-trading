@@ -15,6 +15,13 @@ def add_returns(df):
 # MERGE download_data AND add_returns, ALSO CLEAN THE DATA
 def prepare_data(ticker, period, interval):
     df = download_data(ticker, period, interval)
+
+    df = df.reset_index()
+    if 'Datetime' in df.columns:
+        df = df.set_index('Datetime')
+    elif 'Date' in df.columns:
+        df = df.set_index('Date')
+
     df.columns = df.columns.get_level_values(0)
     df = add_returns(df)
     df = df.dropna()
