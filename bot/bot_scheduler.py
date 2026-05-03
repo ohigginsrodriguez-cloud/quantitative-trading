@@ -70,6 +70,12 @@ class AutomatedTradingBot:
         logger.info(f"📊 Análisis: {analysis['reason']}")
         logger.info(f"   Confianza: {analysis['confidence']:.1%}")
         
+        # ⭐ NUEVO: Si ya hay trade abierto del mismo símbolo, NO entres
+        open_trades = get_open_trades()
+        if any(t[1] == strategy.symbol for t in open_trades):
+            logger.info(f"⚠️  Ya hay trade abierto en {strategy.symbol}. Esperando cierre...")
+            return analysis
+        
         if analysis['signal']:
             logger.info(f"✅ SEÑAL DE ENTRADA")
             logger.info(f"   Entry Price: {analysis['entry_price']:.4f}")
@@ -86,7 +92,7 @@ class AutomatedTradingBot:
             logger.info(f"   Trade #{trade_id} guardado en BD")
         else:
             logger.info(f"❌ Sin señal")
-        
+    
         return analysis
     
     def manage_open_trades(self, strategy, df):
