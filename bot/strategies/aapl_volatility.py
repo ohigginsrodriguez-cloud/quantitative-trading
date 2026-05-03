@@ -1,5 +1,5 @@
 import pandas as pd
-from base_strategy import BaseStrategy
+from strategies.base_strategy import BaseStrategy
 
 class AAPLVolatilityStrategy(BaseStrategy):
     """

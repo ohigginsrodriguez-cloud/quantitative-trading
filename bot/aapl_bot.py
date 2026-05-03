@@ -96,17 +96,13 @@ class TradingBot:
         print(f"\n{'='*70}\n")
 
 if __name__ == '__main__':
-    # CARGAR LA ESTRATEGIA
-    strategy = AAPLVolatilityStrategy(
-        symbol='AAPL',
-        threshold=2.0,
-        sl_pct=0.015,
-        tp_pct=0.04,
-        window=30
-    )
+    # Para AAPL:
+    # from strategies.aapl_volatility import AAPLVolatilityStrategy
+    # strategy = AAPLVolatilityStrategy()
     
-    # CREAR BOT CON LA ESTRATEGIA
+    # Para MSFT:
+    from strategies.msft_trend_following import MSFTTrendFollowingStrategy
+    strategy = MSFTTrendFollowingStrategy()
+    
     bot = TradingBot(strategy)
-    
-    # EJECUTAR
     bot.run()
