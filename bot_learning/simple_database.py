@@ -52,8 +52,12 @@ class Database:
                 conn.commit()
                 print('TRADE INSERTED')
 
+                id_trade = cursor.lastrowid #RETORNO EL ID DE LA ULTIMA FILA INSERTADA
+                return id_trade
+                
         except sqlite3.Error as e:
             print(f'Error: {e}')
+            return None
 
     def get_all_trades(self):
         """MUESTRA TODOS LOS TRADES"""
@@ -108,19 +112,20 @@ class Database:
             return None
 
 
-db = Database()
-db.create_trades_table()
-db.insert_trade(
-    entry_time='2026-05-03 10:30:00',
-    entry_price=280.15,
-    size_position=0.1,
-    direction='LONG'
-)
-db.get_all_trades()
-db.update_trade(
-    id_trade=1,
-    exit_time='2026-05-03 10:35:00',
-    exit_price=295.15
-)
-db.get_all_trades()
-db.get_trade_by_id(id_trade=2)
+if __name__ =='__main__':
+    db = Database()
+    db.create_trades_table()
+    db.insert_trade(
+        entry_time='2026-05-03 10:30:00',
+        entry_price=280.15,
+        size_position=0.1,
+        direction='LONG'
+    )
+    db.get_all_trades()
+    db.update_trade(
+        id_trade=1,
+        exit_time='2026-05-03 10:35:00',
+        exit_price=295.15
+    )
+    db.get_all_trades()
+    db.get_trade_by_id(id_trade=2)
