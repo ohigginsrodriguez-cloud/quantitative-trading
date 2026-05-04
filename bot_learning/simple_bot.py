@@ -7,6 +7,10 @@ import pandas as pd
 
 df_aapl = prepare_data('AAPL', '1mo', '4h')
 
+if df_aapl is None or len(df_aapl) == 0:
+    print('ERROR: NO DE DESCARGARON LOS DATOS DE AAPL')
+    exit()
+
 window = 30
 volatility = df_aapl['Return'].rolling(window).std().iloc[-1]
 threshold = 1
@@ -14,6 +18,7 @@ entry_price = df_aapl['Close'].iloc[-1]
 exit_price = entry_price * 1.05 # SIMULACION DE SUBIDA DE PRECIO
 
 db = Database()
+db.create_trades_table()
 
 if volatility > threshold:
     print('TRADE ABIERTO')
@@ -23,14 +28,15 @@ if volatility > threshold:
         size_position  = 0.1,
         direction      = 'LONG'
     )
+
+    if id_trade:
+        db.update_trade(
+            id_trade    = id_trade,
+            exit_time   = str(df_aapl.index[-1]),
+            exit_price  = exit_price
+        )
+
+        db.get_trade_by_id(id_trade=id_trade)
+        
 else:
     print(f'Volatilidad estable: {volatility: .3f}')
-
-if id_trade:
-    db.update_trade(
-        id_trade    = id_trade,
-        exit_time   = str(df_aapl.index[-1]),
-        exit_price  = exit_price
-    )
-
-    db.get_trade_by_id(id_trade=id_trade)

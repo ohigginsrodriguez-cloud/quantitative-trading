@@ -1,4 +1,20 @@
 import sqlite3
+from datetime import datetime
+
+def format_datetime(dt):
+    """CONVERTIR DATETIME A STRING LIMPIO"""
+    if isinstance(dt, str):
+        # SI YA ES STRING, LIMPIA LA ZONA HORARIA
+        return dt.split('+')[0] # QUITA "+00:00"
+    #SI ES DATETIME, CONVERTIR A STRING
+    return dt.fstring('%Y-%m-%d %H:%M:%S')
+
+def format_price(price):
+    """REDONDEAR EL PRECIO A 3 DECIMALES"""
+    return round(price, 3)
+
+def format_size(size):
+    return round(size, 4)
 
 DB_PATH = '/home/pulpo/Documents/quantitative-trading/bot_learning/database/trades.db'
 
@@ -47,7 +63,11 @@ class Database:
                     """
                     INSERT INTO trades (entry_time, entry_price, size_position, direction) 
                     VALUES (?, ?, ?, ?)
-                    """, (entry_time, entry_price, size_position, direction)
+                    """, (
+                        format_datetime(entry_time), 
+                        format_price(entry_price), 
+                        format_size(size_position), 
+                        direction)
                 )
                 conn.commit()
                 print('TRADE INSERTED')
@@ -82,7 +102,11 @@ class Database:
                     exit_price = ?,
                     pnl = (? - entry_price) * size_position
                     WHERE id_trade = ?
-                    """, (exit_time, exit_price, exit_price, id_trade)
+                    """, (
+                        format_datetime(exit_time), 
+                        format_price(exit_price), 
+                        format_price(exit_price), 
+                        id_trade)
                 )
                 conn.commit()
                 print(f'TRADE #{id_trade} UPDATED')
