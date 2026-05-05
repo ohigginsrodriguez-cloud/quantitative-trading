@@ -1,6 +1,19 @@
 import sqlite3
 from config import DB_PATH
 
+def format_datetime(dt):
+    if isinstance(dt, str):
+        # SI YA ES STRING, LIMPIA LA ZONA HORARIA
+        return dt.split('+')[0]
+    #SI ES DATETIME, CONVERTIR A STRING
+    return dt.strftime('%Y-%m-%d %H:%M:%S')
+
+def format_price(price):
+    return round(price, 3)
+
+def format_size(size):
+    return round(size, 4)
+
 class Database:
     def __init__(self, db_name=DB_PATH):
         self.db_name = db_name
@@ -10,11 +23,11 @@ class Database:
     
     def create_trades_table(self):
         try:
-            with sqlite3.connect() as conn:
+            with self.connect() as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     """
-                    CRREATE TABLE IF NOT EXISTS trades (
+                    CREATE TABLE IF NOT EXISTS trades (
                     id_trades INTEGER PRIMARY KEY AUTOINCREMENT,
                     entry_time TEXT NOT NULL,
                     exit_time TEXT,
@@ -33,13 +46,14 @@ class Database:
 
     def insert_trade(self, entry_time, entry_price, size_position, direction):
         try:
-            with sqlite3.connect() as conn:
-                cursor = conn.cursor(
+            with self.connect() as conn:
+                cursor = conn.cursor()
+                cursor.execute(
                     """
                     INSERT INTO trades (entry_time, entry_price, size_position, direction)
                     VALUES (?, ?, ?, ?)
                     """,(
-                        format_datetime(entry_price),
+                        format_datetime(entry_time),
                         format_price(entry_price),
                         format_size(size_position),
                         direction
@@ -55,7 +69,7 @@ class Database:
         
     def get_all_trades(self):
         try:
-            with sqlite3.connect() as conn:
+            with self.connect() as conn:
                 cursor = conn.cursor()
                 cursor.execute("""SELECT * FROM trades""")
                 trades = cursor.fetchall()
@@ -67,7 +81,7 @@ class Database:
         
     def update_trade(self, id_trade, exit_time, exit_price):
         try:
-            with sqlite3.connect() as conn:
+            with self.connect() as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     """
@@ -79,17 +93,18 @@ class Database:
                     """, (
                         format_datetime(exit_time),
                         format_price(exit_price),
+                        format_price(exit_price),
                         id_trade
                     )
                 )
-                print(f'TRADE #{id_trade} UPDATED')
+                print(f'TRADE #{id_trade} ACTUALIZADO')
 
         except sqlite3.Error as e:
             print(f'ERROR: {e}')
 
     def get_trade_by_id(self, id_trade):
         try:
-            with sqlite3.connect() as conn:
+            with self.connect() as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     """SELECT * FROM trades WHERE id_trade = ?""", 
@@ -104,21 +119,3 @@ class Database:
         except sqlite3.Error as e:
             print(f'ERROR: {e}')
             return None
-
-
-
-
-
-
-def format_datetime(dt):
-    if isinstance(dt, str):
-        # SI YA ES STRING, LIMPIA LA ZONA HORARIA
-        return dt.split('+')[0]
-    #SI ES DATETIME, CONVERTIR A STRING
-    return dt.strftime('%Y-%m-%d %H:%M:%S')
-
-def format_price(price):
-    return round(price, 3)
-
-def format_size(size):
-    return round(size, 4)
