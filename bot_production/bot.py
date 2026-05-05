@@ -14,9 +14,15 @@ class TradingBot:
         self.db.create_trades_table()
 
 
-    def run(self):
-        data = prepare_data(SYMBOL, PERIOD, TIMEFRAME)
-        strategy = VolatilityStrategy(data, STRATEGY_PARAMS)
+    def run(self, config):
+        symbol = config['symbol']
+        timeframe = config['timeframe']
+        period = config.get('period', '1mo')
+        strategy_class = config['strategy']
+        params = config['params']
+
+        data = prepare_data(symbol, period, timeframe)
+        strategy = VolatilityStrategy(data, params)
         result = strategy.analyze()
         signal = result['signal']
 
