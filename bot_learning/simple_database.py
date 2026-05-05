@@ -7,7 +7,7 @@ def format_datetime(dt):
         # SI YA ES STRING, LIMPIA LA ZONA HORARIA
         return dt.split('+')[0] # QUITA "+00:00"
     #SI ES DATETIME, CONVERTIR A STRING
-    return dt.fstring('%Y-%m-%d %H:%M:%S')
+    return dt.strftime('%Y-%m-%d %H:%M:%S')
 
 def format_price(price):
     """REDONDEAR EL PRECIO A 3 DECIMALES"""
